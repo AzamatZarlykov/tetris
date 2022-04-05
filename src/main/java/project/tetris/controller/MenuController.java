@@ -20,7 +20,6 @@ public class MenuController {
 
     @FXML
     protected void onStartButtonClick(ActionEvent event) throws IOException {
-        // When Start is clicked change the scene to the tetris game where the game starts
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("tetris.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(fxmlLoader.load());
@@ -36,5 +35,11 @@ public class MenuController {
     public void onQuitButtonClick(ActionEvent actionEvent) {
         Stage stage = (Stage) quitBtn.getScene().getWindow();
         stage.close();
+    }
+
+    public void onLeaderBoardBtnClick(ActionEvent actionEvent) {
+    }
+
+    public void onInstructionButtonClick(ActionEvent actionEvent) {
     }
 }

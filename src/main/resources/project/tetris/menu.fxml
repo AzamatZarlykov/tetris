@@ -15,9 +15,41 @@
         <URL value="@application.css" />
     </stylesheets>
 
-    <Button fx:id="startBtn" layoutX="275.0" layoutY="535.0" mnemonicParsing="false" onAction="#onStartButtonClick" prefHeight="40.0" prefWidth="150.0" styleClass="button, text" text="Start Game" />
-    <Button fx:id="leaderBoardBtn" layoutX="275.0" layoutY="590.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" styleClass="button, text" text="Leaderboard" />
-    <Button fx:id="quitBtn" layoutX="275.0" layoutY="690.0" mnemonicParsing="false" onAction="#onQuitButtonClick" prefHeight="40.0" prefWidth="150.0" styleClass="button, text" text="Quit" />
-    <Label fx:id="gameNameLabel" alignment="CENTER" layoutX="180.0" layoutY="39.0" prefHeight="74.0" prefWidth="340.0" text="T E T R I S" styleClass="title, text" textFill="WHITE" wrapText="true"/>
-    <Button fx:id="instructionBtn" layoutX="275.0" layoutY="640.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" styleClass="button" text="Instructions" />
+    <Label fx:id="gameNameLabel"
+           layoutY="39.0" alignment="CENTER"
+           prefHeight="74.0" prefWidth="720.0"
+           text="T E T R I S" styleClass="title, text"
+           textFill="WHITE"
+           wrapText="true"/>
+
+
+    <Button fx:id="startBtn"
+            layoutX="285.0" layoutY="535.0"
+            prefHeight="40.0" prefWidth="150.0"
+            styleClass="button, text"
+            text="Start Game"
+            onAction="#onStartButtonClick"
+    />
+
+    <Button fx:id="leaderBoardBtn"
+            layoutX="285.0" layoutY="590.0"
+            prefHeight="40.0" prefWidth="150.0"
+            styleClass="button, text"
+            text="Leaderboard"
+            onAction="#onLeaderBoardBtnClick"
+    />
+
+    <Button fx:id="quitBtn"
+            layoutX="285.0" layoutY="690.0"
+            prefHeight="40.0" prefWidth="150.0"
+            styleClass="button, text" text="Quit"
+            onAction="#onQuitButtonClick"
+    />
+
+    <Button fx:id="instructionBtn"
+            layoutX="285.0" layoutY="640.0"
+            prefHeight="40.0" prefWidth="150.0"
+            styleClass="button" text="Instructions"
+            onAction="#onInstructionButtonClick"
+    />
 </AnchorPane>

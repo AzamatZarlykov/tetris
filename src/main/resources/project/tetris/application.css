@@ -8,6 +8,11 @@
     -fx-border-style: solid;
 }
 
+.line {
+    -fx-border-color:white;
+    -fx-border-width: 2;
+}
+
 /*
     Button CSS used as reference from the following page:
     http://fxexperience.com/2011/12/styling-fx-buttons-with-css/
@@ -45,11 +50,11 @@
     -fx-text-fill: white;
 }
 
-.score {
+.bigLabel {
     -fx-font-size: 25px;
 }
 
-.infoTitle {
+.infoLabel {
     -fx-font-size: 18px
 }
 
