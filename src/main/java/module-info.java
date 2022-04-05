@@ -8,4 +8,6 @@ module com.example.tetris {
 
     opens project.tetris to javafx.fxml;
     exports project.tetris;
+
+    opens project.tetris.controller to javafx.fxml;
 }

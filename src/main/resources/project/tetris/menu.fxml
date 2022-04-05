@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import java.net.URL?>
+
+<AnchorPane prefHeight="780.0"
+            prefWidth="720.0"
+            styleClass="anchor"
+            xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="project.tetris.controller.MenuController">
+
+    <stylesheets>
+        <URL value="@application.css" />
+    </stylesheets>
+
+    <Button fx:id="startBtn" layoutX="275.0" layoutY="535.0" mnemonicParsing="false" onAction="#onStartButtonClick" prefHeight="40.0" prefWidth="150.0" styleClass="button, text" text="Start Game" />
+    <Button fx:id="leaderBoardBtn" layoutX="275.0" layoutY="590.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" styleClass="button, text" text="Leaderboard" />
+    <Button fx:id="quitBtn" layoutX="275.0" layoutY="690.0" mnemonicParsing="false" onAction="#onQuitButtonClick" prefHeight="40.0" prefWidth="150.0" styleClass="button, text" text="Quit" />
+    <Label fx:id="gameNameLabel" alignment="CENTER" layoutX="180.0" layoutY="39.0" prefHeight="74.0" prefWidth="340.0" text="T E T R I S" styleClass="title, text" textFill="WHITE" wrapText="true"/>
+    <Button fx:id="instructionBtn" layoutX="275.0" layoutY="640.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" styleClass="button" text="Instructions" />
+</AnchorPane>
