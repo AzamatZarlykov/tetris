@@ -18,18 +18,21 @@ public class MenuController {
     @FXML
     private Button startBtn, leaderBoardBtn, quitBtn, instructionBtn;
 
+    private void instantiateGameController(FXMLLoader loader) {
+        TetrisBoardController c = loader.getController();
+        new GameController(c);
+    }
+
     @FXML
     protected void onStartButtonClick(ActionEvent event) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("tetris.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(fxmlLoader.load());
 
-//        TetrisGUIController c = fxmlLoader.getController();
-
         stage.setScene(scene);
         stage.show();
 
-//        new GameController(c);
+        instantiateGameController(fxmlLoader);
     }
 
     public void onQuitButtonClick(ActionEvent actionEvent) {
