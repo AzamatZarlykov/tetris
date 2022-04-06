@@ -23,10 +23,15 @@
           prefHeight="660" prefWidth="450"
           styleClass="border">
 
+        <GridPane fx:id="tetrominoPanel"
+                  hgap="1" vgap="1"
+        />
+
         <GridPane fx:id="gameGrid"
                   gridLinesVisible="true"
                   prefHeight="660.0"
                   prefWidth="450.0"
+                  hgap="1" vgap="1"
         />
 
     </Pane>
