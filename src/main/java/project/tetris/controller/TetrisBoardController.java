@@ -1,6 +1,9 @@
 package project.tetris.controller;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -10,7 +13,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import project.tetris.Main;
+import project.tetris.controller.events.KeyboardEventListener;
 import project.tetris.model.board.Board;
 import project.tetris.model.tetromino.Tetromino;
 import project.tetris.model.tetromino.TetrominoInformation;
@@ -18,8 +23,9 @@ import project.tetris.model.tetromino.TetrominoInformation;
 import java.io.IOException;
 
 public class TetrisBoardController {
+    private Timeline timeline;
     private Rectangle[][] tetrominoToDisplay;
-
+    private KeyboardEventListener eventListener;
     @FXML
     private GridPane gameGrid;
     @FXML
@@ -36,6 +42,7 @@ public class TetrisBoardController {
         }
     }
 
+    // returns the color of the tetromino based on the number it has
     private Paint getColor(int i) {
         return switch(i) {
             case 0 -> Color.TRANSPARENT;
@@ -50,6 +57,22 @@ public class TetrisBoardController {
         };
     }
 
+    private void setTetrominoPositionOnBoard(TetrominoInformation tetrominoInfo) {
+        // setting the x position
+        tetrominoPanel.setLayoutX(
+                gameGrid.getLayoutX() + tetrominoInfo.getPosition().getXPos() * Board.BRICK_SIZE +
+                        tetrominoInfo.getPosition().getXPos()
+        );
+
+        // setting the y position
+        tetrominoPanel.setLayoutY(
+                -Board.BRICK_SIZE + gameGrid.getLayoutY() +
+                        (tetrominoInfo.getPosition().getYPos() * Board.BRICK_SIZE) +
+                        tetrominoInfo.getPosition().getYPos()
+        );
+    }
+
+    // display the tetromino on the panel given the color
     private void displayTetrominoShape(TetrominoInformation tetrominoInfo){
         int[][] tetromino = tetrominoInfo.getTetromino();
         tetrominoToDisplay = new Rectangle[tetromino.length][tetromino[0].length];
@@ -63,21 +86,30 @@ public class TetrisBoardController {
             }
         }
 
-        tetrominoPanel.setLayoutX(
-                gameGrid.getLayoutX() + tetrominoInfo.getPosition().getXPos() * Board.BRICK_SIZE +
-                        tetrominoInfo.getPosition().getXPos()
-        );
+        setTetrominoPositionOnBoard(tetrominoInfo);
+    }
 
-        tetrominoPanel.setLayoutY(
-                -Board.BRICK_SIZE + gameGrid.getLayoutY() +
-                        (tetrominoInfo.getPosition().getYPos() * Board.BRICK_SIZE) +
-                        tetrominoInfo.getPosition().getYPos()
-        );
+    private void refreshTetrominoPosition(TetrominoInformation updated) {
+        setTetrominoPositionOnBoard(updated);
     }
 
     public void run(int[][] tetrisBoard, TetrominoInformation tetrominoInfo) {
         instantiateBoardGrid(tetrisBoard);
+
         displayTetrominoShape(tetrominoInfo);
+
+        // every 400 millis update the board
+        timeline = new Timeline((new KeyFrame(Duration.millis(400),
+                keyframe -> {
+                    TetrominoInformation updatedInfo = eventListener.onDownEvent();
+                    refreshTetrominoPosition(updatedInfo);
+                })));
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+    }
+
+    public void setEventListener(KeyboardEventListener eventListener) {
+        this.eventListener = eventListener;
     }
 
     public void onMenuBtnClick(ActionEvent actionEvent) throws IOException {

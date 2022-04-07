@@ -9,4 +9,9 @@ public record Position(int x, int y) {
     public int getYPos() {
         return y;
     }
+
+    @Override
+    public String toString() {
+        return "X: " + x + " Y: " + y;
+    }
 }

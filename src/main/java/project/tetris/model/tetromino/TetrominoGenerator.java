@@ -40,7 +40,7 @@ public class TetrominoGenerator {
     private void generateNewTetromino() {
         int tetrominoShape = 0;
         Tetromino newT = getTetromino();
-        Position spawn = new Position(4, 0);
+        Position spawn = new Position(5, 0);
 
         currentTetrominoInfo = new TetrominoInformation(
                 newT, tetrominoShape,
@@ -60,14 +60,6 @@ public class TetrominoGenerator {
         }
         return nextTetromino.poll();
     }
-
-//    private void setTetrominoShape(int newShape) {
-//        this.currentTetrominoShape = newShape;
-//    }
-//
-//    private void setTetromino(Tetromino tetromino) {
-//        this.currentTetromino = tetromino;
-//    }
 
     public TetrominoInformation getCurrentTetrominoInfo() {
         return currentTetrominoInfo;
