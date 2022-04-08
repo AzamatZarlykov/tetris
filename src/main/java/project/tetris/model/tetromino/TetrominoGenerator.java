@@ -37,7 +37,7 @@ public class TetrominoGenerator {
         generateNewTetromino();
     }
 
-    private void generateNewTetromino() {
+    public void generateNewTetromino() {
         int tetrominoShape = 0;
         Tetromino newT = getTetromino();
         Position spawn = new Position(5, 0);

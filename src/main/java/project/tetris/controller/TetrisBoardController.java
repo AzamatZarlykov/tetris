@@ -37,10 +37,13 @@ public class TetrisBoardController {
 
     // create the grid on the board
     private void instantiateBoardGrid(int[][] tetrisBoard) {
+        tetrominoToDisplay = new Rectangle[tetrisBoard.length][tetrisBoard[0].length];
+
         for (int row = 0; row < tetrisBoard.length; row++ ){
             for (int col = 0; col < tetrisBoard[row].length; col++) {
                 Rectangle rect = new Rectangle(Board.BRICK_SIZE, Board.BRICK_SIZE);
                 rect.setFill(Color.TRANSPARENT);
+                tetrominoToDisplay[row][col] = rect;
                 gameGrid.add(rect, col, row);
             }
         }
@@ -79,18 +82,30 @@ public class TetrisBoardController {
     // display the tetromino on the panel given the color
     private void displayTetrominoShape(TetrominoInformation tetrominoInfo){
         int[][] tetromino = tetrominoInfo.getTetromino();
-        tetrominoToDisplay = new Rectangle[tetromino.length][tetromino[0].length];
 
         for (int i = 0; i < tetromino.length; i++) {
             for (int j = 0; j < tetromino[0].length; j++) {
                 Rectangle rect = new Rectangle(Board.BRICK_SIZE, Board.BRICK_SIZE);
                 rect.setFill(getColor(tetromino[i][j]));
-                tetrominoToDisplay[i][j] = rect;
                 tetrominoPanel.add(rect, j, i);
             }
         }
 
         setTetrominoPositionOnBoard(tetrominoInfo);
+    }
+
+    private void setRectangleData(int color, Rectangle rect) {
+        rect.setFill(getColor(color));
+        rect.setArcHeight(9);
+        rect.setArcWidth(9);
+    }
+
+    public void refreshGameBackground(int[][] board) {
+        for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board[row].length; col++) {
+                setRectangleData(board[row][col], tetrominoToDisplay[row][col]);
+            }
+        }
     }
 
     private void refreshTetrominoPosition(TetrominoInformation updated) {

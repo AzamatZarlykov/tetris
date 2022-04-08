@@ -15,7 +15,7 @@ public class Board {
     public static final int BRICK_SIZE = 29;
 
     // board
-    private final int[][] tetrisBoard;
+    private int[][] tetrisBoard;
     // current tetromino on the board
     private TetrominoInformation currentTetromino;
     // current score
@@ -29,6 +29,31 @@ public class Board {
     public void setCurrentTetromino(TetrominoInformation tetromino) {
         this.currentTetromino = tetromino;
     }
+
+    // function that merges current tetromino to a copy of the current board
+    // and returns the updated board
+    public void mergeBrickToBackground() {
+        int[][] tetromino = currentTetromino.getTetromino();
+        Position tetrominoPos = currentTetromino.getPosition();
+
+        int[][] copy = copy(tetrisBoard);
+        for (int i = 0; i < tetromino.length; i++) {
+            for (int j = 0; j < tetromino[i].length; j++) {
+                int targetX = tetrominoPos.getXPos() + j;
+                int targetY = tetrominoPos.getYPos() + i;
+                if (tetromino[i][j] != 0) {
+                    copy[targetY - 1][targetX] = tetromino[i][j];
+                }
+            }
+        }
+        tetrisBoard = copy;
+    }
+
+    // neat copy 2D: https://stackoverflow.com/questions/5617016/how-do-i-copy-a-2-dimensional-array-in-java
+    public int[][] copy(int[][] original) {
+        return Arrays.stream(original).map(int[]::clone).toArray(int[][]::new);
+    }
+
 
     // checks if the position is within the board
     private boolean outOfBounds(int[][] tetrisBoard, int targetX, int targetY) {
@@ -75,4 +100,5 @@ public class Board {
     public int[][] getTetrisBoard() {
         return tetrisBoard;
     }
+
 }

@@ -29,8 +29,17 @@ public class GameController implements KeyboardEventListener {
 
     @Override
     public TetrominoInformation onDownEvent() {
-        board.moveTetrominoDown();
+        boolean allowedMove = board.moveTetrominoDown();
 
+        if (!allowedMove) {
+            board.mergeBrickToBackground();
+            generator.generateNewTetromino();
+            board.setCurrentTetromino(generator.getCurrentTetrominoInfo());
+        } else {
+
+        }
+
+        this.view.refreshGameBackground(board.getTetrisBoard());
         return generator.getCurrentTetrominoInfo();
     }
 }
