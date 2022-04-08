@@ -22,6 +22,7 @@ public class GameController implements KeyboardEventListener {
 
         this.view = view;
         this.view.setEventListener(this);
+        this.view.bindScore(board.getScore());
         this.view.run(board.getTetrisBoard(), generator.getCurrentTetrominoInfo());
     }
 

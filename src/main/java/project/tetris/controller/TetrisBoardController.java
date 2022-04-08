@@ -2,12 +2,14 @@ package project.tetris.controller;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.property.IntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -30,6 +32,8 @@ public class TetrisBoardController {
     private GridPane gameGrid;
     @FXML
     public GridPane tetrominoPanel; // panel to display the tetromino shape
+    @FXML
+    public Label scoreValue;
 
     // create the grid on the board
     private void instantiateBoardGrid(int[][] tetrisBoard) {
@@ -93,6 +97,7 @@ public class TetrisBoardController {
         setTetrominoPositionOnBoard(updated);
     }
 
+
     public void run(int[][] tetrisBoard, TetrominoInformation tetrominoInfo) {
         instantiateBoardGrid(tetrisBoard);
 
@@ -106,10 +111,15 @@ public class TetrisBoardController {
                 })));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
+
     }
 
     public void setEventListener(KeyboardEventListener eventListener) {
         this.eventListener = eventListener;
+    }
+
+    public void bindScore(IntegerProperty currentScore) {
+        scoreValue.textProperty().bind(currentScore.asString());
     }
 
     public void onMenuBtnClick(ActionEvent actionEvent) throws IOException {

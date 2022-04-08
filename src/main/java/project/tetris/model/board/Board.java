@@ -1,5 +1,7 @@
 package project.tetris.model.board;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import project.tetris.model.helper.Position;
 import project.tetris.model.tetromino.TetrominoInformation;
 import project.tetris.model.tetromino.*;
@@ -16,9 +18,12 @@ public class Board {
     private final int[][] tetrisBoard;
     // current tetromino on the board
     private TetrominoInformation currentTetromino;
+    // current score
+    private IntegerProperty score;
 
     public Board() {
         tetrisBoard = new int[HEIGHT][WIDTH];
+        score = new SimpleIntegerProperty(0);
     }
 
     public void setCurrentTetromino(TetrominoInformation tetromino) {
@@ -61,6 +66,10 @@ public class Board {
             currentTetromino.setTetrominoPosition(newPos);
             return true;
         }
+    }
+
+    public IntegerProperty getScore() {
+        return score;
     }
 
     public int[][] getTetrisBoard() {

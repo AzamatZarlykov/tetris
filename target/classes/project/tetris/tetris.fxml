@@ -46,7 +46,7 @@
                  layoutY="14.0" prefWidth="150"
                  text="Score:" alignment="CENTER"/>
 
-          <Label styleClass="text, bigLabel"
+          <Label fx:id="scoreValue" styleClass="text, bigLabel"
                  layoutY="40" prefWidth="150"
                  text="text" alignment="CENTER"/>
 
