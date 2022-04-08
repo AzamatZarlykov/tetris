@@ -4,12 +4,15 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.IntegerProperty;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -19,14 +22,14 @@ import javafx.util.Duration;
 import project.tetris.Main;
 import project.tetris.controller.events.KeyboardEventListener;
 import project.tetris.model.board.Board;
-import project.tetris.model.tetromino.Tetromino;
 import project.tetris.model.tetromino.TetrominoInformation;
 
 import java.io.IOException;
 
 public class TetrisBoardController {
-    private Timeline timeline;
-    private Rectangle[][] tetrominoToDisplay;
+    // store all the tetromino
+    private Rectangle[][] allTetromino;
+    private Rectangle[][] fallingTetromino;
     private KeyboardEventListener eventListener;
     @FXML
     private GridPane gameGrid;
@@ -37,13 +40,11 @@ public class TetrisBoardController {
 
     // create the grid on the board
     private void instantiateBoardGrid(int[][] tetrisBoard) {
-        tetrominoToDisplay = new Rectangle[tetrisBoard.length][tetrisBoard[0].length];
-
         for (int row = 0; row < tetrisBoard.length; row++ ){
             for (int col = 0; col < tetrisBoard[row].length; col++) {
                 Rectangle rect = new Rectangle(Board.BRICK_SIZE, Board.BRICK_SIZE);
                 rect.setFill(Color.TRANSPARENT);
-                tetrominoToDisplay[row][col] = rect;
+                allTetromino[row][col] = rect;
                 gameGrid.add(rect, col, row);
             }
         }
@@ -82,11 +83,11 @@ public class TetrisBoardController {
     // display the tetromino on the panel given the color
     private void displayTetrominoShape(TetrominoInformation tetrominoInfo){
         int[][] tetromino = tetrominoInfo.getTetromino();
-
         for (int i = 0; i < tetromino.length; i++) {
             for (int j = 0; j < tetromino[0].length; j++) {
                 Rectangle rect = new Rectangle(Board.BRICK_SIZE, Board.BRICK_SIZE);
                 rect.setFill(getColor(tetromino[i][j]));
+                fallingTetromino[i][j] = rect;
                 tetrominoPanel.add(rect, j, i);
             }
         }
@@ -94,7 +95,7 @@ public class TetrisBoardController {
         setTetrominoPositionOnBoard(tetrominoInfo);
     }
 
-    private void setRectangleData(int color, Rectangle rect) {
+    private void drawTetromino(int color, Rectangle rect) {
         rect.setFill(getColor(color));
         rect.setArcHeight(9);
         rect.setArcWidth(9);
@@ -103,30 +104,63 @@ public class TetrisBoardController {
     public void refreshGameBackground(int[][] board) {
         for (int row = 0; row < board.length; row++) {
             for (int col = 0; col < board[row].length; col++) {
-                setRectangleData(board[row][col], tetrominoToDisplay[row][col]);
+                drawTetromino(board[row][col], allTetromino[row][col]);
             }
         }
     }
 
     private void refreshTetrominoPosition(TetrominoInformation updated) {
         setTetrominoPositionOnBoard(updated);
+
+        int[][] tetromino = updated.getTetromino();
+        for (int i = 0; i < tetromino.length; i++) {
+            for (int j = 0; j < tetromino[0].length; j++) {
+                drawTetromino(tetromino[i][j], fallingTetromino[i][j]);
+            }
+        }
     }
 
-
-    public void run(int[][] tetrisBoard, TetrominoInformation tetrominoInfo) {
-        instantiateBoardGrid(tetrisBoard);
-
-        displayTetrominoShape(tetrominoInfo);
-
+    private void setGameLoop() {
         // every 400 millis update the board
-        timeline = new Timeline((new KeyFrame(Duration.millis(400),
+        Timeline timeline = new Timeline((new KeyFrame(Duration.millis(400),
                 keyframe -> {
-                    TetrominoInformation updatedInfo = eventListener.onDownEvent();
+                    TetrominoInformation updatedInfo = eventListener.onDownEvent(false);
                     refreshTetrominoPosition(updatedInfo);
                 })));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
+    }
 
+    public void run(int[][] tetrisBoard, TetrominoInformation tetrominoInfo) {
+        allTetromino = new Rectangle[tetrisBoard.length][tetrisBoard[0].length];
+        fallingTetromino = new Rectangle[tetrisBoard.length][tetrisBoard[0].length];
+
+        instantiateBoardGrid(tetrisBoard);
+
+        displayTetrominoShape(tetrominoInfo);
+
+        setGameLoop();
+
+        gameGrid.setFocusTraversable(true);
+        gameGrid.requestFocus();
+        gameGrid.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.S) {
+                refreshTetrominoPosition(eventListener.onDownEvent(true));
+                event.consume();
+            }
+            if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.A) {
+                refreshTetrominoPosition(eventListener.onLeftEvent());
+                event.consume();
+            }
+            if (event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.D) {
+                refreshTetrominoPosition(eventListener.onRightEvent());
+                event.consume();
+            }
+            if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.W) {
+                refreshTetrominoPosition(eventListener.onRotateEvent());
+                event.consume();
+            }
+        });
     }
 
     public void setEventListener(KeyboardEventListener eventListener) {

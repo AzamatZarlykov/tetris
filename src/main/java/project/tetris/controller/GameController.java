@@ -2,7 +2,6 @@ package project.tetris.controller;
 
 import project.tetris.controller.events.KeyboardEventListener;
 import project.tetris.model.board.Board;
-import project.tetris.model.helper.Position;
 import project.tetris.model.tetromino.TetrominoGenerator;
 import project.tetris.model.tetromino.TetrominoInformation;
 
@@ -28,7 +27,7 @@ public class GameController implements KeyboardEventListener {
 
 
     @Override
-    public TetrominoInformation onDownEvent() {
+    public TetrominoInformation onDownEvent(boolean userInput) {
         boolean allowedMove = board.moveTetrominoDown();
 
         if (!allowedMove) {
@@ -36,10 +35,31 @@ public class GameController implements KeyboardEventListener {
             generator.generateNewTetromino();
             board.setCurrentTetromino(generator.getCurrentTetrominoInfo());
         } else {
-
+            // if user pressed down increment the score by 1
+            if (userInput) {
+                board.incrementScore(1);
+            }
         }
 
         this.view.refreshGameBackground(board.getTetrisBoard());
+        return generator.getCurrentTetrominoInfo();
+    }
+
+    @Override
+    public TetrominoInformation onLeftEvent() {
+        board.moveTetrominoLeft();
+        return generator.getCurrentTetrominoInfo();
+    }
+
+    @Override
+    public TetrominoInformation onRightEvent() {
+        board.moveTetrominoRight();
+        return generator.getCurrentTetrominoInfo();
+    }
+
+    @Override
+    public TetrominoInformation onRotateEvent() {
+        board.rotateTetromino();
         return generator.getCurrentTetrominoInfo();
     }
 }

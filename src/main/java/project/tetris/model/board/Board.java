@@ -4,7 +4,6 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import project.tetris.model.helper.Position;
 import project.tetris.model.tetromino.TetrominoInformation;
-import project.tetris.model.tetromino.*;
 
 import java.util.*;
 
@@ -19,11 +18,23 @@ public class Board {
     // current tetromino on the board
     private TetrominoInformation currentTetromino;
     // current score
-    private IntegerProperty score;
+    private final IntegerProperty score;
 
     public Board() {
         tetrisBoard = new int[HEIGHT][WIDTH];
         score = new SimpleIntegerProperty(0);
+    }
+
+    public IntegerProperty getScore() {
+        return score;
+    }
+
+    public int[][] getTetrisBoard() {
+        return tetrisBoard;
+    }
+
+    public void incrementScore(int val) {
+        score.setValue(score.getValue() + val);
     }
 
     public void setCurrentTetromino(TetrominoInformation tetromino) {
@@ -83,7 +94,7 @@ public class Board {
         Position newPos = new Position(currentPos.getXPos(), currentPos.getYPos() + 1);
         currentTetromino.setTetrominoPosition(newPos);
 
-        boolean anyConflict = outOfBoardBorder(currentTetromino.getTetromino(), newPos);
+        boolean anyConflict = outOfBoardBorder(currentTetromino.getTetromino(), newPos  );
 
         if (anyConflict) {
             return false;
@@ -93,12 +104,35 @@ public class Board {
         }
     }
 
-    public IntegerProperty getScore() {
-        return score;
+    public void moveTetrominoLeft() {
+        Position currentPos = currentTetromino.getPosition();
+
+        Position newPos = new Position(currentPos.getXPos() - 1, currentPos.getYPos());
+
+        if (!outOfBoardBorder(currentTetromino.getTetromino(), newPos)) {
+            currentTetromino.setTetrominoPosition(newPos);
+        }
     }
 
-    public int[][] getTetrisBoard() {
-        return tetrisBoard;
+    public void moveTetrominoRight() {
+        Position currentPos = currentTetromino.getPosition();
+
+        Position newPos = new Position(currentPos.getXPos() + 1, currentPos.getYPos());
+
+        if (!outOfBoardBorder(currentTetromino.getTetromino(), newPos)) {
+            currentTetromino.setTetrominoPosition(newPos);
+        }
+
     }
 
+    public void rotateTetromino() {
+        int currentShape = currentTetromino.getShape();
+        currentShape = (currentShape + 1) % currentTetromino.getTetrominoRepresentation().size();
+
+        int[][] updatedShape = currentTetromino.getTetrominoRepresentation().get(currentShape);
+
+        if (!outOfBoardBorder(updatedShape, currentTetromino.getPosition())) {
+            currentTetromino.setShape(currentShape);
+        }
+    }
 }

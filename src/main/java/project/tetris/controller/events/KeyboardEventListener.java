@@ -3,11 +3,11 @@ package project.tetris.controller.events;
 import project.tetris.model.tetromino.TetrominoInformation;
 
 public interface KeyboardEventListener {
-    TetrominoInformation onDownEvent();
-//
-//    ViewData onLeftEvent();
-//
-//    ViewData onRightEvent();
-//
-//    ViewData onRotateEvent();
+    TetrominoInformation onDownEvent(boolean userInput);
+
+    TetrominoInformation onLeftEvent();
+
+    TetrominoInformation onRightEvent();
+
+    TetrominoInformation onRotateEvent();
 }
