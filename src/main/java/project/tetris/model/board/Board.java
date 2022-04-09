@@ -87,6 +87,50 @@ public class Board {
         return false;
     }
 
+    // check if line is full
+    private boolean fullLine(int[] line) {
+        boolean clear = true;
+        for (int j : line) {
+            if (j == 0) {
+                clear = false;
+                break;
+            }
+        }
+        return clear;
+    }
+
+    // updates the board if there is/are lines to remove
+    // returns the corresponding updates score
+    public DeletedRowInfo checkRemovingBlocks() {
+        int toRemoveCount = 0;
+        int[][] updated = new int[tetrisBoard.length][tetrisBoard[0].length];
+
+        Deque<int[]> newRows = new ArrayDeque<>();
+
+        for (int[] ints : tetrisBoard) {
+            // check if array does not contain zeros which implies it is full
+            if (fullLine(ints)) {
+                toRemoveCount++;
+            } else {
+                newRows.add(ints);
+            }
+        }
+
+        for (int i = tetrisBoard.length - 1; i >= 0; i--) {
+            int[] row = newRows.pollLast();
+            if (row == null) {
+                break;
+            }
+            updated[i] = row;
+        }
+
+        int scoreBonus = 50 * toRemoveCount;
+
+        tetrisBoard = updated;
+
+        return new DeletedRowInfo(toRemoveCount, scoreBonus);
+    }
+
     // move tetromino down the board
     public boolean moveTetrominoDown() {
         Position currentPos = currentTetromino.getPosition();

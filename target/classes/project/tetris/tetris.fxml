@@ -34,6 +34,10 @@
                   hgap="1" vgap="1"
         />
 
+        <Group fx:id="notification" layoutX="100" layoutY="200">
+<!--            <GameOverPanel fx:id="gameOverPanel" layoutY="150"/>-->
+        </Group>
+
     </Pane>
 
     <!--    Information Bar on the Right Side      -->

@@ -1,6 +1,7 @@
 package project.tetris.controller;
 
 import javafx.animation.KeyFrame;
+import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.beans.property.IntegerProperty;
 import javafx.event.ActionEvent;
@@ -8,6 +9,7 @@ import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -22,6 +24,9 @@ import javafx.util.Duration;
 import project.tetris.Main;
 import project.tetris.controller.events.KeyboardEventListener;
 import project.tetris.model.board.Board;
+import project.tetris.model.board.DeletedRowInfo;
+import project.tetris.model.board.UpdatedBlockInfo;
+import project.tetris.model.helper.ScoreUpdateNotification;
 import project.tetris.model.tetromino.TetrominoInformation;
 
 import java.io.IOException;
@@ -37,6 +42,8 @@ public class TetrisBoardController {
     public GridPane tetrominoPanel; // panel to display the tetromino shape
     @FXML
     public Label scoreValue;
+    @FXML
+    public Group notification;
 
     // create the grid on the board
     private void instantiateBoardGrid(int[][] tetrisBoard) {
@@ -120,32 +127,37 @@ public class TetrisBoardController {
         }
     }
 
+    private void displayScoreNotification(DeletedRowInfo deletedRowInfo) {
+        if (deletedRowInfo != null && deletedRowInfo.getRowCount() > 0) {
+            ScoreUpdateNotification n = new ScoreUpdateNotification(
+                    " + " + deletedRowInfo.getTotalScore()
+            );
+            notification.getChildren().add(n);
+            n.showScore(notification.getChildren());
+        }
+
+    }
+
     private void setGameLoop() {
         // every 400 millis update the board
         Timeline timeline = new Timeline((new KeyFrame(Duration.millis(400),
                 keyframe -> {
-                    TetrominoInformation updatedInfo = eventListener.onDownEvent(false);
-                    refreshTetrominoPosition(updatedInfo);
+                    UpdatedBlockInfo updatedInfo = eventListener.onDownEvent(false);
+                    refreshTetrominoPosition(updatedInfo.getTetrominoInformation());
+                    displayScoreNotification(updatedInfo.getDeletedRowInfo());
                 })));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
 
-    public void run(int[][] tetrisBoard, TetrominoInformation tetrominoInfo) {
-        allTetromino = new Rectangle[tetrisBoard.length][tetrisBoard[0].length];
-        fallingTetromino = new Rectangle[tetrisBoard.length][tetrisBoard[0].length];
-
-        instantiateBoardGrid(tetrisBoard);
-
-        displayTetrominoShape(tetrominoInfo);
-
-        setGameLoop();
-
+    private void setInputEvents() {
         gameGrid.setFocusTraversable(true);
         gameGrid.requestFocus();
         gameGrid.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.S) {
-                refreshTetrominoPosition(eventListener.onDownEvent(true));
+                UpdatedBlockInfo update = eventListener.onDownEvent(true);
+                refreshTetrominoPosition(update.getTetrominoInformation());
+                displayScoreNotification(update.getDeletedRowInfo());
                 event.consume();
             }
             if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.A) {
@@ -161,6 +173,21 @@ public class TetrisBoardController {
                 event.consume();
             }
         });
+    }
+
+    public void run(int[][] tetrisBoard, TetrominoInformation tetrominoInfo) {
+        allTetromino = new Rectangle[tetrisBoard.length][tetrisBoard[0].length];
+        fallingTetromino = new Rectangle[tetrisBoard.length][tetrisBoard[0].length];
+
+        instantiateBoardGrid(tetrisBoard);
+
+        displayTetrominoShape(tetrominoInfo);
+
+        setGameLoop();
+
+        setInputEvents();
+
+
     }
 
     public void setEventListener(KeyboardEventListener eventListener) {

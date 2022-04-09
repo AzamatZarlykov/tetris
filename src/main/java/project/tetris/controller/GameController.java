@@ -2,6 +2,8 @@ package project.tetris.controller;
 
 import project.tetris.controller.events.KeyboardEventListener;
 import project.tetris.model.board.Board;
+import project.tetris.model.board.DeletedRowInfo;
+import project.tetris.model.board.UpdatedBlockInfo;
 import project.tetris.model.tetromino.TetrominoGenerator;
 import project.tetris.model.tetromino.TetrominoInformation;
 
@@ -27,11 +29,18 @@ public class GameController implements KeyboardEventListener {
 
 
     @Override
-    public TetrominoInformation onDownEvent(boolean userInput) {
+    public UpdatedBlockInfo onDownEvent(boolean userInput) {
         boolean allowedMove = board.moveTetrominoDown();
+        DeletedRowInfo deletedRowInfo = null;
 
         if (!allowedMove) {
             board.mergeBrickToBackground();
+            deletedRowInfo = board.checkRemovingBlocks();
+
+            if (deletedRowInfo.getRowCount() > 0) {
+                board.incrementScore(deletedRowInfo.getTotalScore());
+            }
+
             generator.generateNewTetromino();
             board.setCurrentTetromino(generator.getCurrentTetrominoInfo());
         } else {
@@ -42,7 +51,8 @@ public class GameController implements KeyboardEventListener {
         }
 
         this.view.refreshGameBackground(board.getTetrisBoard());
-        return generator.getCurrentTetrominoInfo();
+
+        return new UpdatedBlockInfo(generator.getCurrentTetrominoInfo(), deletedRowInfo);
     }
 
     @Override
