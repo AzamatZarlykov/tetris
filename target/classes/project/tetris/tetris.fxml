@@ -34,8 +34,10 @@
                   hgap="1" vgap="1"
         />
 
-        <Group fx:id="notification" layoutX="100" layoutY="200">
-<!--            <GameOverPanel fx:id="gameOverPanel" layoutY="150"/>-->
+        <Group fx:id="notification" layoutX="75" layoutY="175">
+            <Label fx:id="gameOverLabel"
+                   visible="false" styleClass="title"
+                   layoutY="150" text="G A M E  O V E R"/>
         </Group>
 
     </Pane>
@@ -53,10 +55,6 @@
           <Label fx:id="scoreValue" styleClass="text, bigLabel"
                  layoutY="40" prefWidth="150"
                  text="text" alignment="CENTER"/>
-
-<!--          <Line endX="100.0" layoutX="78.0"-->
-<!--                layoutY="100.0" startX="-77.0"-->
-<!--                stroke="WHITE" styleClass="line" />-->
 
           <Label styleClass="text, infoLabel"
                  layoutY="140" prefWidth="150"
@@ -78,12 +76,8 @@
 
           </BorderPane>
 
-<!--          <Line endX="100.0" layoutX="78.0"-->
-<!--                layoutY="530.0" startX="-77.0"-->
-<!--                stroke="WHITE" styleClass="line" />-->
-
-
-          <Button layoutX="15.0" layoutY="520.0"
+          <ToggleButton fx:id="pauseButton" styleClass="button"
+                layoutX="15.0" layoutY="520.0"
                 prefHeight="35.0" prefWidth="120.0"
                 text="Pause" />
 

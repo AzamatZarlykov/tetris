@@ -71,7 +71,7 @@ public class Board {
         return targetX < 0 || targetY >= tetrisBoard.length || targetX >= tetrisBoard[targetY].length;
     }
 
-    private boolean outOfBoardBorder(int[][] tetromino, Position currentPos) {
+    public boolean outOfBoardBorder(int[][] tetromino, Position currentPos) {
         for (int i = 0; i < tetromino.length; i++) {
             for (int j = 0; j < tetromino[i].length; j++) {
                 int targetX = currentPos.getXPos() + j;

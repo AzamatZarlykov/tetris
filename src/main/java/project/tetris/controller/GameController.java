@@ -42,7 +42,13 @@ public class GameController implements KeyboardEventListener {
             }
 
             generator.generateNewTetromino();
-            board.setCurrentTetromino(generator.getCurrentTetrominoInfo());
+            TetrominoInformation generated = generator.getCurrentTetrominoInfo();
+            if (board.outOfBoardBorder(generated.getTetromino(), generated.getPosition())) {
+                // game over
+                view.displayGameOver();
+            } else {
+                board.setCurrentTetromino(generated);
+            }
         } else {
             // if user pressed down increment the score by 1
             if (userInput) {

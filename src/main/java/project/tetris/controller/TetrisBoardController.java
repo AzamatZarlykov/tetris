@@ -3,7 +3,11 @@ package project.tetris.controller;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -13,8 +17,10 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -33,9 +39,12 @@ import java.io.IOException;
 
 public class TetrisBoardController {
     // store all the tetromino
+    Timeline timeline;
     private Rectangle[][] allTetromino;
     private Rectangle[][] fallingTetromino;
     private KeyboardEventListener eventListener;
+    private boolean isGameOver;
+    private final BooleanProperty paused = new SimpleBooleanProperty();
     @FXML
     private GridPane gameGrid;
     @FXML
@@ -44,6 +53,15 @@ public class TetrisBoardController {
     public Label scoreValue;
     @FXML
     public Group notification;
+    @FXML
+    private ToggleButton pauseButton;
+    @FXML
+    private Label gameOverLabel;
+
+    public void displayGameOver() {
+        timeline.stop();
+        gameOverLabel.setVisible(true);
+    }
 
     // create the grid on the board
     private void instantiateBoardGrid(int[][] tetrisBoard) {
@@ -140,7 +158,7 @@ public class TetrisBoardController {
 
     private void setGameLoop() {
         // every 400 millis update the board
-        Timeline timeline = new Timeline((new KeyFrame(Duration.millis(400),
+        timeline = new Timeline((new KeyFrame(Duration.millis(400),
                 keyframe -> {
                     UpdatedBlockInfo updatedInfo = eventListener.onDownEvent(false);
                     refreshTetrominoPosition(updatedInfo.getTetrominoInformation());
@@ -154,23 +172,44 @@ public class TetrisBoardController {
         gameGrid.setFocusTraversable(true);
         gameGrid.requestFocus();
         gameGrid.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.S) {
-                UpdatedBlockInfo update = eventListener.onDownEvent(true);
-                refreshTetrominoPosition(update.getTetrominoInformation());
-                displayScoreNotification(update.getDeletedRowInfo());
-                event.consume();
+            if (paused.getValue() == Boolean.FALSE && !isGameOver) {
+                if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.S) {
+                    UpdatedBlockInfo update = eventListener.onDownEvent(true);
+                    refreshTetrominoPosition(update.getTetrominoInformation());
+                    displayScoreNotification(update.getDeletedRowInfo());
+                    event.consume();
+                }
+                if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.A) {
+                    refreshTetrominoPosition(eventListener.onLeftEvent());
+                    event.consume();
+                }
+                if (event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.D) {
+                    refreshTetrominoPosition(eventListener.onRightEvent());
+                    event.consume();
+                }
+                if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.W) {
+                    refreshTetrominoPosition(eventListener.onRotateEvent());
+                    event.consume();
+                }
             }
-            if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.A) {
-                refreshTetrominoPosition(eventListener.onLeftEvent());
-                event.consume();
+            if (event.getCode() == KeyCode.P) {
+                pauseButton.selectedProperty().setValue(!pauseButton.selectedProperty().getValue());
             }
-            if (event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.D) {
-                refreshTetrominoPosition(eventListener.onRightEvent());
-                event.consume();
-            }
-            if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.W) {
-                refreshTetrominoPosition(eventListener.onRotateEvent());
-                event.consume();
+        });
+    }
+
+    private void bindPausedButton(){
+        pauseButton.selectedProperty().bindBidirectional(paused);
+        pauseButton.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
+                if(t1) {
+                    timeline.pause();
+                    pauseButton.setText("Resume");
+                } else {
+                    timeline.play();
+                    pauseButton.setText("Pause");
+                }
             }
         });
     }
@@ -187,7 +226,7 @@ public class TetrisBoardController {
 
         setInputEvents();
 
-
+        bindPausedButton();
     }
 
     public void setEventListener(KeyboardEventListener eventListener) {
