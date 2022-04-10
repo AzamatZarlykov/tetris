@@ -11,4 +11,6 @@ public interface KeyboardEventListener {
     TetrominoInformation onRightEvent();
 
     TetrominoInformation onRotateEvent();
+
+    TetrominoInformation onExchangeEvent();
 }

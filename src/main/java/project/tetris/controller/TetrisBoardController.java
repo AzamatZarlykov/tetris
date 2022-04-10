@@ -52,6 +52,8 @@ public class TetrisBoardController {
     private Label gameOverLabel;
     @FXML
     private GridPane nextTetromino;
+    @FXML
+    private GridPane savedTetromino;
 
     public void displayGameOver() {
         timeline.stop();
@@ -141,6 +143,7 @@ public class TetrisBoardController {
         }
 
         displayNextTetromino(updated);
+        displaySavedTetromino(updated);
     }
 
     private void displayScoreNotification(DeletedRowInfo deletedRowInfo) {
@@ -190,6 +193,11 @@ public class TetrisBoardController {
                     refreshTetrominoPosition(eventListener.onRotateEvent());
                     event.consume();
                 }
+                if (event.getCode() == KeyCode.SPACE) {
+                    // exchange the saved tetromino with the currently falling one
+                    refreshTetrominoPosition(eventListener.onExchangeEvent());
+                    event.consume();
+                }
             }
             if (event.getCode() == KeyCode.P) {
                 pauseButton.selectedProperty().setValue(!pauseButton.selectedProperty().getValue());
@@ -210,28 +218,9 @@ public class TetrisBoardController {
         });
     }
 
-    private void setNextLayout(double x, double y) {
-        nextTetromino.setLayoutX(x);
-        nextTetromino.setLayoutY(y);
-    }
-
-    private void centerPieces(Tetromino tetromino ) {
-        double currentX = 25;
-        double currentY = 30;
-        // center the pieces in the borderpane
-        if (tetromino instanceof ITetromino) {
-            setNextLayout(15,40);
-        } else if (tetromino instanceof TTetromino) {
-            setNextLayout(currentX + 10, currentY - 10);
-        } else if (tetromino instanceof OTetromino) {
-            setNextLayout(currentX + 10, currentY);
-        } else {
-            setNextLayout(currentX, currentY);
-        }
-    }
-
     private void displayNextTetromino(TetrominoInformation tetrominoInfo) {
         int offset = 4;
+
         Tetromino tetromino = tetrominoInfo.getNext();
         int[][] next = tetromino.getStructure();
 
@@ -246,8 +235,29 @@ public class TetrisBoardController {
                 drawTetromino(next[i][j], r);
 
                 if (next[i][j] != 0) {
-                    centerPieces(tetromino);
                     nextTetromino.add(r, j, i);
+                }
+            }
+        }
+    }
+
+    private void displaySavedTetromino(TetrominoInformation tetrominoInfo) {
+        int offset = 4;
+
+        Tetromino tetromino = tetrominoInfo.getSaved();
+        int[][] saved = tetromino.getStructure();
+
+        savedTetromino.getChildren().clear();
+
+        for (int i = 0; i < saved.length; i++) {
+            for (int j = 0; j < saved[0].length; j++) {
+
+                Rectangle r = new Rectangle(Board.BRICK_SIZE - offset,
+                        Board.BRICK_SIZE - offset);
+                drawTetromino(saved[i][j], r);
+
+                if (saved[i][j] != 0) {
+                    savedTetromino.add(r, j, i);
                 }
             }
         }
@@ -255,6 +265,7 @@ public class TetrisBoardController {
 
     // entry
     public void run(int[][] tetrisBoard, TetrominoInformation tetrominoInfo) {
+
         allTetromino = new Rectangle[tetrisBoard.length][tetrisBoard[0].length];
         fallingTetromino = new Rectangle[tetrisBoard.length][tetrisBoard[0].length];
 
@@ -267,6 +278,8 @@ public class TetrisBoardController {
         displayTetrominoShape(tetrominoInfo);
 
         displayNextTetromino(tetrominoInfo);
+
+        displaySavedTetromino(tetrominoInfo);
 
         setGameLoop();
 

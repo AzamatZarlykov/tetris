@@ -4,6 +4,7 @@ import project.tetris.controller.events.KeyboardEventListener;
 import project.tetris.model.board.Board;
 import project.tetris.model.board.DeletedRowInfo;
 import project.tetris.model.board.UpdatedBlockInfo;
+import project.tetris.model.tetromino.Tetromino;
 import project.tetris.model.tetromino.TetrominoGenerator;
 import project.tetris.model.tetromino.TetrominoInformation;
 
@@ -15,8 +16,8 @@ public class GameController implements KeyboardEventListener {
 
     public GameController(TetrisBoardController view) {
         this.board = new Board();
-
         this.generator = new TetrominoGenerator();
+
         TetrominoInformation tetrominoInformation = generator.getCurrentTetrominoInfo();
 
         this.board.setCurrentTetromino(tetrominoInformation);
@@ -24,9 +25,8 @@ public class GameController implements KeyboardEventListener {
         this.view = view;
         this.view.setEventListener(this);
         this.view.bindScore(board.getScore());
-        this.view.run(board.getTetrisBoard(), generator.getCurrentTetrominoInfo());
+        this.view.run(board.getTetrisBoard(), tetrominoInformation);
     }
-
 
     @Override
     public UpdatedBlockInfo onDownEvent(boolean userInput) {
@@ -41,7 +41,7 @@ public class GameController implements KeyboardEventListener {
                 board.incrementScore(deletedRowInfo.getTotalScore());
             }
 
-            generator.generateNewTetromino();
+            generator.generateNewTetromino(generator.getCurrentTetrominoInfo().getSaved());
             TetrominoInformation generated = generator.getCurrentTetrominoInfo();
             if (board.outOfBoardBorder(generated.getTetromino(), generated.getPosition())) {
                 // game over
@@ -76,6 +76,19 @@ public class GameController implements KeyboardEventListener {
     @Override
     public TetrominoInformation onRotateEvent() {
         board.rotateTetromino();
+        return generator.getCurrentTetrominoInfo();
+    }
+
+    @Override
+    public TetrominoInformation onExchangeEvent() {
+        TetrominoInformation c = generator.getCurrentTetrominoInfo();
+
+        Tetromino next = c.getNext();
+        Tetromino saved = c.getSaved();
+
+        c.setSaved(next);
+        c.setNext(saved);
+        generator.changeNext(saved);
         return generator.getCurrentTetrominoInfo();
     }
 }

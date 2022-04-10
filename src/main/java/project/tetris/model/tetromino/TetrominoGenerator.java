@@ -7,7 +7,7 @@ import java.util.*;
 public class TetrominoGenerator {
     private final Random rand;
     private final List<Tetromino> tetrominoList;
-    private final Deque<Tetromino> nextTetromino;
+    private Deque<Tetromino> nextTetromino;
 
     private TetrominoInformation currentTetrominoInfo;
 
@@ -33,18 +33,26 @@ public class TetrominoGenerator {
                 rand.nextInt(tetrominoList.size())
         ));
 
-        generateNewTetromino();
+        generateNewTetromino(null);
     }
 
-    public void generateNewTetromino() {
+    public void generateNewTetromino(Tetromino s) {
         int tetrominoShape = 0;
         Tetromino newT = getTetromino();
         Position spawn = new Position(5, 0);
+        Tetromino saved;
+
+        if (s == null) {
+            saved = tetrominoList.get(rand.nextInt(tetrominoList.size()));
+        } else {
+            saved = s;
+        }
 
         currentTetrominoInfo = new TetrominoInformation(
                 newT, tetrominoShape,
                 spawn.getXPos(), spawn.getYPos(),
-                getNextTetromino()
+                getNextTetromino(),
+                saved
         );
     }
 
@@ -52,7 +60,19 @@ public class TetrominoGenerator {
         return nextTetromino.peek();
     }
 
-    public Tetromino getTetromino() {
+    public void changeNext(Tetromino saved) {
+        // remove the next tetromino
+        nextTetromino.poll();
+        // add the saved tetromino and the remaining
+        Deque<Tetromino> tempNextTet = new ArrayDeque<>();
+        tempNextTet.add(saved);
+        while (!nextTetromino.isEmpty()) {
+            tempNextTet.add(nextTetromino.poll());
+        }
+        nextTetromino = tempNextTet;
+    }
+
+    private Tetromino getTetromino() {
         if (nextTetromino.size() <= 1) {
             nextTetromino.add(tetrominoList.get(
                     rand.nextInt(tetrominoList.size())

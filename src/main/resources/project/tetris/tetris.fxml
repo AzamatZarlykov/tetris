@@ -63,10 +63,12 @@
           <BorderPane layoutX="10" layoutY="170"
                       prefWidth="130" prefHeight="110"
                       styleClass="displayTetromino">
-                <GridPane  fx:id="nextTetromino"
-                           layoutY="30" layoutX="25"
-                           vgap="1" hgap="1" />
+
+                <GridPane  fx:id="nextTetromino" alignment="CENTER"
+                           vgap="1" hgap="1" layoutY="55" layoutX="65"
+                />
           </BorderPane>
+
 
           <Label styleClass="text, infoLabel"
                  layoutY="300" prefWidth="150"
@@ -76,7 +78,12 @@
                       prefWidth="130" prefHeight="110"
                       styleClass="displayTetromino">
 
+              <GridPane fx:id="savedTetromino" alignment="CENTER"
+                        vgap="1" hgap="1" layoutY="55" layoutX="65"
+              />
+
           </BorderPane>
+
 
           <ToggleButton fx:id="pauseButton" styleClass="button"
                 layoutX="15.0" layoutY="560.0"
