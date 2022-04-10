@@ -16,7 +16,7 @@ public class MenuController {
     @FXML
     private Label gameNameLabel;
     @FXML
-    private Button startBtn, leaderBoardBtn, quitBtn, instructionBtn;
+    private Button startBtn, leaderBoardBtn, quitBtn, instructionBtn, menu;
 
     private void instantiateGameController(FXMLLoader loader) {
         TetrisBoardController c = loader.getController();
@@ -35,14 +35,36 @@ public class MenuController {
         instantiateGameController(fxmlLoader);
     }
 
+    @FXML
     public void onQuitButtonClick(ActionEvent actionEvent) {
         Stage stage = (Stage) quitBtn.getScene().getWindow();
         stage.close();
     }
 
+    @FXML
     public void onLeaderBoardBtnClick(ActionEvent actionEvent) {
     }
 
+    private void toggleVisibility(boolean display) {
+        gameNameLabel.setVisible(display);
+        startBtn.setVisible(display);
+        leaderBoardBtn.setVisible(display);
+        instructionBtn.setVisible(display);
+        quitBtn.setVisible(display);
+
+        menu.setVisible(!display);
+    }
+
+    @FXML
     public void onInstructionButtonClick(ActionEvent actionEvent) {
+        toggleVisibility(false);
+
+
+    }
+
+    @FXML
+    private void onMenuButtonClick(ActionEvent actionEvent) {
+        toggleVisibility(true);
+
     }
 }

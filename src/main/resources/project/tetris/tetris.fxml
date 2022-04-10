@@ -64,7 +64,7 @@
                       prefWidth="130" prefHeight="110"
                       styleClass="displayTetromino">
                 <GridPane  fx:id="nextTetromino"
-                           layoutY="20" layoutX="20"
+                           layoutY="30" layoutX="25"
                            vgap="1" hgap="1" />
           </BorderPane>
 
@@ -79,22 +79,14 @@
           </BorderPane>
 
           <ToggleButton fx:id="pauseButton" styleClass="button"
-                layoutX="15.0" layoutY="520.0"
+                layoutX="15.0" layoutY="560.0"
                 prefHeight="35.0" prefWidth="120.0"
                 text="Pause" />
-
-          <Button layoutX="15.0" layoutY="565.0"
-                prefHeight="35.0" prefWidth="120.0"
-                text="Help" />
 
           <Button layoutX="15.0" layoutY="610.0"
                   prefHeight="35.0" prefWidth="120.0"
                   text="Menu"
                   onAction="#onMenuBtnClick"
           />
-
-
-
-
     </Pane>
 </Pane>

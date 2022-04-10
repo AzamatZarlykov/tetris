@@ -24,9 +24,9 @@ import project.tetris.Main;
 import project.tetris.controller.events.KeyboardEventListener;
 import project.tetris.model.board.Board;
 import project.tetris.model.board.DeletedRowInfo;
-import project.tetris.model.helper.UpdatedBlockInfo;
+import project.tetris.model.board.UpdatedBlockInfo;
 import project.tetris.model.helper.ScoreUpdateNotification;
-import project.tetris.model.helper.TetrominoInformation;
+import project.tetris.model.tetromino.*;
 
 import java.io.IOException;
 
@@ -56,6 +56,7 @@ public class TetrisBoardController {
     public void displayGameOver() {
         timeline.stop();
         gameOverLabel.setVisible(true);
+        isGameOver = true;
     }
 
     // create the grid on the board
@@ -139,7 +140,7 @@ public class TetrisBoardController {
             }
         }
 
-        displayNextTetromino(updated.getNext());
+        displayNextTetromino(updated);
     }
 
     private void displayScoreNotification(DeletedRowInfo deletedRowInfo) {
@@ -157,6 +158,9 @@ public class TetrisBoardController {
         // every 400 millis update the board
         timeline = new Timeline((new KeyFrame(Duration.millis(400),
                 keyframe -> {
+                    gameGrid.setFocusTraversable(true);
+                    gameGrid.requestFocus();
+
                     UpdatedBlockInfo updatedInfo = eventListener.onDownEvent(false);
                     refreshTetrominoPosition(updatedInfo.getTetrominoInformation());
                     displayScoreNotification(updatedInfo.getDeletedRowInfo());
@@ -166,8 +170,6 @@ public class TetrisBoardController {
     }
 
     private void setInputEvents() {
-        gameGrid.setFocusTraversable(true);
-        gameGrid.requestFocus();
         gameGrid.setOnKeyPressed(event -> {
             if (paused.getValue() == Boolean.FALSE && !isGameOver) {
                 if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.S) {
@@ -208,13 +210,43 @@ public class TetrisBoardController {
         });
     }
 
-    private void displayNextTetromino(int[][] next) {
+    private void setNextLayout(double x, double y) {
+        nextTetromino.setLayoutX(x);
+        nextTetromino.setLayoutY(y);
+    }
+
+    private void centerPieces(Tetromino tetromino ) {
+        double currentX = 25;
+        double currentY = 30;
+        // center the pieces in the borderpane
+        if (tetromino instanceof ITetromino) {
+            setNextLayout(15,40);
+        } else if (tetromino instanceof TTetromino) {
+            setNextLayout(currentX + 10, currentY - 10);
+        } else if (tetromino instanceof OTetromino) {
+            setNextLayout(currentX + 10, currentY);
+        } else {
+            setNextLayout(currentX, currentY);
+        }
+    }
+
+    private void displayNextTetromino(TetrominoInformation tetrominoInfo) {
+        int offset = 4;
+        Tetromino tetromino = tetrominoInfo.getNext();
+        int[][] next = tetromino.getStructure();
+
         nextTetromino.getChildren().clear();
+
         for (int i = 0; i < next.length; i++) {
             for (int j = 0; j < next[0].length; j++) {
-                Rectangle r = new Rectangle(Board.BRICK_SIZE, Board.BRICK_SIZE);
+
+
+                Rectangle r = new Rectangle(Board.BRICK_SIZE - offset,
+                        Board.BRICK_SIZE - offset);
                 drawTetromino(next[i][j], r);
+
                 if (next[i][j] != 0) {
+                    centerPieces(tetromino);
                     nextTetromino.add(r, j, i);
                 }
             }
@@ -222,21 +254,23 @@ public class TetrisBoardController {
     }
 
     // entry
-    public void run(int[][] tetrisBoard, TetrominoInformation tetrominoInfo, int[][] next) {
+    public void run(int[][] tetrisBoard, TetrominoInformation tetrominoInfo) {
         allTetromino = new Rectangle[tetrisBoard.length][tetrisBoard[0].length];
         fallingTetromino = new Rectangle[tetrisBoard.length][tetrisBoard[0].length];
+
+        setInputEvents();
+
+        bindPausedButton();
 
         instantiateBoardGrid(tetrisBoard);
 
         displayTetrominoShape(tetrominoInfo);
 
-        displayNextTetromino(next);
+        displayNextTetromino(tetrominoInfo);
 
         setGameLoop();
 
-        setInputEvents();
 
-        bindPausedButton();
     }
 
     public void setEventListener(KeyboardEventListener eventListener) {

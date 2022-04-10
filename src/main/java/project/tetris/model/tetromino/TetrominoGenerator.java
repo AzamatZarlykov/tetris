@@ -1,7 +1,6 @@
 package project.tetris.model.tetromino;
 
 import project.tetris.model.helper.Position;
-import project.tetris.model.helper.TetrominoInformation;
 
 import java.util.*;
 
@@ -45,7 +44,7 @@ public class TetrominoGenerator {
         currentTetrominoInfo = new TetrominoInformation(
                 newT, tetrominoShape,
                 spawn.getXPos(), spawn.getYPos(),
-                getNextTetromino().getStructure()
+                getNextTetromino()
         );
     }
 

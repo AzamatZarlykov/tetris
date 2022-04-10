@@ -1,55 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="680.0"
-            prefWidth="630.0"
-            styleClass="anchor"
-            xmlns="http://javafx.com/javafx/17"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="project.tetris.controller.MenuController">
+<AnchorPane prefHeight="680.0" prefWidth="630.0" styleClass="anchor" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.tetris.controller.MenuController">
 
     <stylesheets>
         <URL value="@application.css" />
     </stylesheets>
 
-    <Label fx:id="gameNameLabel"
-           layoutY="39.0" alignment="CENTER"
-           prefHeight="74.0" prefWidth="630.0"
-           text="T E T R I S" styleClass="title, text"
-           textFill="WHITE"
-           wrapText="true"/>
+    <Label fx:id="gameNameLabel" alignment="CENTER" layoutY="39.0" prefHeight="74.0" prefWidth="630.0" styleClass="title, text" text="T E T R I S" textFill="WHITE" wrapText="true" />
 
 
-    <Button fx:id="startBtn"
-            layoutX="240.0" layoutY="440.0"
-            prefHeight="40.0" prefWidth="150.0"
-            styleClass="button, text"
-            text="Start Game"
-            onAction="#onStartButtonClick"
-    />
+    <Button fx:id="startBtn" layoutX="240.0" layoutY="440.0" onAction="#onStartButtonClick" prefHeight="40.0" prefWidth="150.0" styleClass="button, text" text="Start Game" />
 
-    <Button fx:id="leaderBoardBtn"
-            layoutX="240.0" layoutY="490.0"
-            prefHeight="40.0" prefWidth="150.0"
-            styleClass="button, text"
-            text="Leaderboard"
-            onAction="#onLeaderBoardBtnClick"
-    />
+    <Button fx:id="leaderBoardBtn" layoutX="240.0" layoutY="490.0" onAction="#onLeaderBoardBtnClick" prefHeight="40.0" prefWidth="150.0" styleClass="button, text" text="Leaderboard" />
 
-    <Button fx:id="instructionBtn"
-            layoutX="240.0" layoutY="540.0"
-            prefHeight="40.0" prefWidth="150.0"
-            styleClass="button" text="Instructions"
-            onAction="#onInstructionButtonClick"
-    />
+    <Button fx:id="instructionBtn" layoutX="240.0" layoutY="540.0" onAction="#onInstructionButtonClick" prefHeight="40.0" prefWidth="150.0" styleClass="button" text="Instructions" />
 
-    <Button fx:id="quitBtn"
-            layoutX="240.0" layoutY="590.0"
-            prefHeight="40.0" prefWidth="150.0"
-            styleClass="button, text" text="Quit"
-            onAction="#onQuitButtonClick"
-    />
+    <Button fx:id="quitBtn" layoutX="240.0" layoutY="590.0" onAction="#onQuitButtonClick" prefHeight="40.0" prefWidth="150.0" styleClass="button, text" text="Quit" />
+
+    <Button fx:id="menu" visible="false" layoutX="14.0" layoutY="14.0" onAction="#onMenuButtonClick" prefHeight="40.0" prefWidth="123.0" styleClass="button, text" text="Menu" />
 </AnchorPane>

@@ -3,9 +3,9 @@ package project.tetris.controller;
 import project.tetris.controller.events.KeyboardEventListener;
 import project.tetris.model.board.Board;
 import project.tetris.model.board.DeletedRowInfo;
-import project.tetris.model.helper.UpdatedBlockInfo;
+import project.tetris.model.board.UpdatedBlockInfo;
 import project.tetris.model.tetromino.TetrominoGenerator;
-import project.tetris.model.helper.TetrominoInformation;
+import project.tetris.model.tetromino.TetrominoInformation;
 
 // Controller of the game
 public class GameController implements KeyboardEventListener {
@@ -24,8 +24,7 @@ public class GameController implements KeyboardEventListener {
         this.view = view;
         this.view.setEventListener(this);
         this.view.bindScore(board.getScore());
-        this.view.run(board.getTetrisBoard(), generator.getCurrentTetrominoInfo(),
-                generator.getNextTetromino().getStructure());
+        this.view.run(board.getTetrisBoard(), generator.getCurrentTetrominoInfo());
     }
 
 

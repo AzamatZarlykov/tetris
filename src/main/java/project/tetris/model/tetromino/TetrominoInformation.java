@@ -1,4 +1,4 @@
-package project.tetris.model.helper;
+package project.tetris.model.tetromino;
 
 import project.tetris.model.helper.Position;
 import project.tetris.model.tetromino.Tetromino;
@@ -9,9 +9,9 @@ public class TetrominoInformation {
     private final Tetromino tetromino;
     private Position position;
     private int currentShape;
-    private final int[][] next;
+    private final Tetromino next;
 
-    public TetrominoInformation(Tetromino tetromino, int currentShape, int x, int y, int[][] next) {
+    public TetrominoInformation(Tetromino tetromino, int currentShape, int x, int y, Tetromino next) {
         this.tetromino = tetromino;
         this.currentShape = currentShape;
         this.position = new Position(x, y);
@@ -38,7 +38,7 @@ public class TetrominoInformation {
         return currentShape;
     }
 
-    public int[][] getNext() { return next; }
+    public Tetromino getNext() { return next; }
 
     public void setShape(int val) {
         currentShape = val;
