@@ -63,7 +63,9 @@
           <BorderPane layoutX="10" layoutY="170"
                       prefWidth="130" prefHeight="110"
                       styleClass="displayTetromino">
-
+                <GridPane  fx:id="nextTetromino"
+                           layoutY="20" layoutX="20"
+                           vgap="1" hgap="1" />
           </BorderPane>
 
           <Label styleClass="text, infoLabel"

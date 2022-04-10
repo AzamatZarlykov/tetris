@@ -1,16 +1,11 @@
 package project.tetris.controller;
 
 import javafx.animation.KeyFrame;
-import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
@@ -19,8 +14,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -31,9 +24,9 @@ import project.tetris.Main;
 import project.tetris.controller.events.KeyboardEventListener;
 import project.tetris.model.board.Board;
 import project.tetris.model.board.DeletedRowInfo;
-import project.tetris.model.board.UpdatedBlockInfo;
+import project.tetris.model.helper.UpdatedBlockInfo;
 import project.tetris.model.helper.ScoreUpdateNotification;
-import project.tetris.model.tetromino.TetrominoInformation;
+import project.tetris.model.helper.TetrominoInformation;
 
 import java.io.IOException;
 
@@ -57,6 +50,8 @@ public class TetrisBoardController {
     private ToggleButton pauseButton;
     @FXML
     private Label gameOverLabel;
+    @FXML
+    private GridPane nextTetromino;
 
     public void displayGameOver() {
         timeline.stop();
@@ -143,6 +138,8 @@ public class TetrisBoardController {
                 drawTetromino(tetromino[i][j], fallingTetromino[i][j]);
             }
         }
+
+        displayNextTetromino(updated.getNext());
     }
 
     private void displayScoreNotification(DeletedRowInfo deletedRowInfo) {
@@ -200,27 +197,40 @@ public class TetrisBoardController {
 
     private void bindPausedButton(){
         pauseButton.selectedProperty().bindBidirectional(paused);
-        pauseButton.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
-                if(t1) {
-                    timeline.pause();
-                    pauseButton.setText("Resume");
-                } else {
-                    timeline.play();
-                    pauseButton.setText("Pause");
-                }
+        pauseButton.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+            if(t1) {
+                timeline.pause();
+                pauseButton.setText("Resume");
+            } else {
+                timeline.play();
+                pauseButton.setText("Pause");
             }
         });
     }
 
-    public void run(int[][] tetrisBoard, TetrominoInformation tetrominoInfo) {
+    private void displayNextTetromino(int[][] next) {
+        nextTetromino.getChildren().clear();
+        for (int i = 0; i < next.length; i++) {
+            for (int j = 0; j < next[0].length; j++) {
+                Rectangle r = new Rectangle(Board.BRICK_SIZE, Board.BRICK_SIZE);
+                drawTetromino(next[i][j], r);
+                if (next[i][j] != 0) {
+                    nextTetromino.add(r, j, i);
+                }
+            }
+        }
+    }
+
+    // entry
+    public void run(int[][] tetrisBoard, TetrominoInformation tetrominoInfo, int[][] next) {
         allTetromino = new Rectangle[tetrisBoard.length][tetrisBoard[0].length];
         fallingTetromino = new Rectangle[tetrisBoard.length][tetrisBoard[0].length];
 
         instantiateBoardGrid(tetrisBoard);
 
         displayTetrominoShape(tetrominoInfo);
+
+        displayNextTetromino(next);
 
         setGameLoop();
 

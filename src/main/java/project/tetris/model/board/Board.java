@@ -3,7 +3,7 @@ package project.tetris.model.board;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import project.tetris.model.helper.Position;
-import project.tetris.model.tetromino.TetrominoInformation;
+import project.tetris.model.helper.TetrominoInformation;
 
 import java.util.*;
 

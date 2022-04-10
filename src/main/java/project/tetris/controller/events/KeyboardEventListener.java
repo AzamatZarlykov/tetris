@@ -1,7 +1,7 @@
 package project.tetris.controller.events;
 
-import project.tetris.model.board.UpdatedBlockInfo;
-import project.tetris.model.tetromino.TetrominoInformation;
+import project.tetris.model.helper.UpdatedBlockInfo;
+import project.tetris.model.helper.TetrominoInformation;
 
 public interface KeyboardEventListener {
     UpdatedBlockInfo onDownEvent(boolean userInput);
