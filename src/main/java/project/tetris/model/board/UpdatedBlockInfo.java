@@ -1,6 +1,5 @@
 package project.tetris.model.board;
 
-import project.tetris.model.board.DeletedRowInfo;
 import project.tetris.model.tetromino.TetrominoInformation;
 
 public record UpdatedBlockInfo(TetrominoInformation tetrominoInformation, DeletedRowInfo deletedRowInfo) {

@@ -5,21 +5,28 @@ import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Duration;
+import org.controlsfx.control.action.Action;
 import project.tetris.Main;
 import project.tetris.controller.events.KeyboardEventListener;
 import project.tetris.model.board.Board;
@@ -28,6 +35,8 @@ import project.tetris.model.board.UpdatedBlockInfo;
 import project.tetris.model.helper.ScoreUpdateNotification;
 import project.tetris.model.tetromino.*;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class TetrisBoardController {
@@ -54,6 +63,27 @@ public class TetrisBoardController {
     private GridPane nextTetromino;
     @FXML
     private GridPane savedTetromino;
+    @FXML
+    private Label scoreDisplay;
+    @FXML
+    private TextField username;
+    @FXML
+    private Label scoreText;
+    @FXML
+    private Label nextText;
+    @FXML
+    private BorderPane nextBorder;
+    @FXML
+    private Label saveText;
+    @FXML
+    private BorderPane saveBorder;
+    @FXML
+    private Button menuBtn;
+    @FXML
+    private Button saveBtn;
+    @FXML
+    private Button leaveBtn;
+
 
     public void displayGameOver() {
         timeline.stop();
@@ -282,8 +312,6 @@ public class TetrisBoardController {
         displaySavedTetromino(tetrominoInfo);
 
         setGameLoop();
-
-
     }
 
     public void setEventListener(KeyboardEventListener eventListener) {
@@ -294,11 +322,81 @@ public class TetrisBoardController {
         scoreValue.textProperty().bind(currentScore.asString());
     }
 
+    private void removeGamePlay() {
+        if (!isGameOver) {
+            displayGameOver();
+        }
+
+        gameGrid.getChildren().clear();
+        tetrominoPanel.getChildren().clear();
+        gameOverLabel.setLayoutY(0);
+
+        scoreText.setVisible(false);
+        scoreValue.setVisible(false);
+        nextText.setVisible(false);
+        nextBorder.setVisible(false);
+        saveText.setVisible(false);
+        saveBorder.setVisible(false);
+        pauseButton.setVisible(false);
+        menuBtn.setVisible(false);
+    }
+
+    private void addTextLimiter(int maxLength) {
+        username.textProperty().addListener((ov, oldValue, newValue) -> {
+            if (username.getText().length() > maxLength) {
+                String s = username.getText().substring(0, maxLength);
+                username.setText(s);
+            }
+        });
+    }
+
     public void onMenuBtnClick(ActionEvent actionEvent) throws IOException {
+        removeGamePlay();
+        username.setVisible(true);
+
+        scoreDisplay.setVisible(true);
+        username.setVisible(true);
+        saveBtn.setVisible(true);
+        leaveBtn.setVisible(true);
+
+        scoreDisplay.setText(scoreDisplay.getText() + scoreValue.getText());
+
+        addTextLimiter(15);
+    }
+
+    private void moveToMainMenu(ActionEvent event) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("menu.fxml"));
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(fxmlLoader.load());
+
         stage.setScene(scene);
         stage.show();
+    }
+
+
+
+    public void onSaveBtnClick(ActionEvent actionEvent) throws IOException {
+        if (username.getText().trim().isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            String content = "Please fill your username";
+            alert.setContentText(content);
+            alert.showAndWait();
+        } else {
+            BufferedWriter bw = new BufferedWriter(
+                    new FileWriter("leaderboard/scores.txt", true)
+            );
+
+            String uname = username.getText();
+            String score = scoreValue.getText();
+
+            bw.write(uname + ": " + score + "\n");
+            bw.close();
+
+            moveToMainMenu(actionEvent);
+        }
+    }
+
+    public void onLeaveBtnClick(ActionEvent actionEvent) throws IOException {
+        moveToMainMenu(actionEvent);
     }
 }

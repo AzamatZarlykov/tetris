@@ -1,7 +1,6 @@
 package project.tetris.model.tetromino;
 
 import project.tetris.model.helper.Position;
-import project.tetris.model.tetromino.Tetromino;
 
 import java.util.List;
 
