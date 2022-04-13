@@ -30,6 +30,8 @@ public class GameController implements KeyboardEventListener {
 
     @Override
     public UpdatedBlockInfo onDownEvent(boolean userInput) {
+        board.incrementScore(1);
+
         boolean allowedMove = board.moveTetrominoDown();
         DeletedRowInfo deletedRowInfo = null;
 

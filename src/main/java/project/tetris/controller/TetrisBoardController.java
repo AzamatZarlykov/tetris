@@ -17,16 +17,11 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.util.Duration;
-import org.controlsfx.control.action.Action;
 import project.tetris.Main;
 import project.tetris.controller.events.KeyboardEventListener;
 import project.tetris.model.board.Board;
@@ -47,6 +42,7 @@ public class TetrisBoardController {
     private KeyboardEventListener eventListener;
     private boolean isGameOver;
     private final BooleanProperty paused = new SimpleBooleanProperty();
+
     @FXML
     private GridPane gameGrid;
     @FXML
