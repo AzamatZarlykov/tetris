@@ -17,9 +17,11 @@
     </stylesheets>
 
     <!--    Board Game     -->
+
     <Pane layoutX="10" layoutY="10"
           prefHeight="660" prefWidth="450"
           maxHeight="660" maxWidth="450"
+          minHeight="660" minWidth="450"
           styleClass="border">
 
         <GridPane fx:id="tetrominoPanel"
@@ -71,6 +73,7 @@
     <Pane layoutX="470" layoutY="10"
           prefHeight="660" prefWidth="150"
           maxHeight="660" maxWidth="150"
+          minHeight="660" minWidth="150"
           styleClass="border">
 
           <Label fx:id="scoreText"

@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import project.tetris.Main;
 import project.tetris.model.menu.Highscore;
@@ -30,6 +31,8 @@ public class MenuController {
     private TableColumn<Highscore, String> username;
     @FXML
     private TableColumn<Highscore, Integer> score;
+    @FXML
+    private VBox help;
 
     ObservableList<Highscore> data = FXCollections.observableArrayList();
 
@@ -99,12 +102,12 @@ public class MenuController {
         menu.setVisible(!display);
 
         if (type == InfoType.HELP) {
-            // instruction
+            help.setVisible(!display);
         } else if (type == InfoType.SCOREBOARD) {
             table.setVisible(!display);
         } else if (type == InfoType.NONE) {
             table.setVisible(!display);
-            // Instruction display
+            help.setVisible(!display);
         }
     }
 
