@@ -7,42 +7,84 @@ import project.tetris.model.tetromino.TetrominoInformation;
 
 import java.util.*;
 
+/**
+ * Class <code>Board</code> represents the game board.
+ *
+ * Its responsibility is to maintain the movements of tetromino and store them in the background
+ *
+ * @author Azamat Zarlykov
+ */
 public class Board {
-    // constants
+    /**
+     * Constant width of the board
+     */
     public static final int WIDTH = 15;
+    /**
+     * Constant height of the board
+     */
     public static final int HEIGHT = 22;
+    /**
+     * Constant size of the square brick
+     */
     public static final int BRICK_SIZE = 29;
 
-    // board
+    /**
+     * Representation of the board by 2 dimensional array
+     */
     private int[][] tetrisBoard;
-    // current tetromino on the board
+    /**
+     * Tetromino that is located on the board
+     */
     private TetrominoInformation currentTetromino;
-    // current score
+    /**
+     * Current score of the game
+     */
     private final IntegerProperty score;
 
+    /**
+     * Constructor that instantiates the board and score of the game
+     */
     public Board() {
         tetrisBoard = new int[HEIGHT][WIDTH];
         score = new SimpleIntegerProperty(0);
     }
 
+    /**
+     * @return the score of the game
+     */
     public IntegerProperty getScore() {
         return score;
     }
 
+    /**
+     * @return the board representation of the game
+     */
     public int[][] getTetrisBoard() {
         return tetrisBoard;
     }
 
+    /**
+     * Increments the score of the game
+     *
+     * @param val additional points to be added to the score
+     */
     public void incrementScore(int val) {
         score.setValue(score.getValue() + val);
     }
 
+    /**
+     * @param tetromino tetromino to be passed
+     */
     public void setCurrentTetromino(TetrominoInformation tetromino) {
         this.currentTetromino = tetromino;
     }
 
-    // function that merges current tetromino to a copy of the current board
-    // and returns the updated board
+    /**
+     * This method embeds the current falling tetromino to a board
+     *
+     * <code>mergeBrickToBackground</code> creates the copy of the array to store the tetromino
+     * since otherwise changes cannot be made to a board that's currently being used
+     */
     public void mergeBrickToBackground() {
         int[][] tetromino = currentTetromino.getTetromino();
         Position tetrominoPos = currentTetromino.getPosition();
@@ -60,17 +102,32 @@ public class Board {
         tetrisBoard = copy;
     }
 
+    /**
+     * @param original original board
+     * @return copy of the current board
+     */
     // neat copy 2D: https://stackoverflow.com/questions/5617016/how-do-i-copy-a-2-dimensional-array-in-java
     public int[][] copy(int[][] original) {
         return Arrays.stream(original).map(int[]::clone).toArray(int[][]::new);
     }
 
 
-    // checks if the position is within the board
-    private boolean outOfBounds(int[][] tetrisBoard, int targetX, int targetY) {
+    /**
+     * @param targetX x position
+     * @param targetY y position
+     * @return true if withing the bounds of the board, false otherwise
+     */
+    private boolean outOfBounds(int targetX, int targetY) {
         return targetX < 0 || targetY >= tetrisBoard.length || targetX >= tetrisBoard[targetY].length;
     }
 
+    /**
+     * This method checks if the tetromino is within the board
+     *
+     * @param tetromino current tetromino representation
+     * @param currentPos current position of tetromino
+     * @return true if tetromino is out of the board, false otherwise
+     */
     public boolean outOfBoardBorder(int[][] tetromino, Position currentPos) {
         for (int i = 0; i < tetromino.length; i++) {
             for (int j = 0; j < tetromino[i].length; j++) {
@@ -78,7 +135,7 @@ public class Board {
                 int targetY = currentPos.getYPos() + i;
 
                 if (tetromino[i][j] != 0 &&
-                        (outOfBounds(tetrisBoard, targetX, targetY) ||
+                        (outOfBounds(targetX, targetY) ||
                                 tetrisBoard[targetY][targetX] != 0)) {
                     return true;
                 }
@@ -87,7 +144,10 @@ public class Board {
         return false;
     }
 
-    // check if line is full
+    /**
+     * @param line row of the board
+     * @return true if the row is full (filled by tetrominos), false otherwise
+     */
     private boolean fullLine(int[] line) {
         boolean clear = true;
         for (int j : line) {
@@ -99,8 +159,11 @@ public class Board {
         return clear;
     }
 
-    // updates the board if there is/are lines to remove
-    // returns the corresponding updates score
+    /**
+     * This method updated the board if there is/are lines to remove
+     *
+     * @return <code>DeletedRowInfo</code> that holds the information of the deleted row
+     */
     public DeletedRowInfo checkRemovingBlocks() {
         int toRemoveCount = 0;
         int[][] updated = new int[tetrisBoard.length][tetrisBoard[0].length];
@@ -131,7 +194,11 @@ public class Board {
         return new DeletedRowInfo(toRemoveCount, scoreBonus);
     }
 
-    // move tetromino down the board
+    /**
+     * This method moves the tetromino down by changing its position
+     *
+     * @return true if the tetromino can move down without conflicts, false otherwise
+     */
     public boolean moveTetrominoDown() {
         Position currentPos = currentTetromino.getPosition();
 
@@ -148,6 +215,9 @@ public class Board {
         }
     }
 
+    /**
+     * This method moves the tetromino left by changing its position
+     */
     public void moveTetrominoLeft() {
         Position currentPos = currentTetromino.getPosition();
 
@@ -158,6 +228,9 @@ public class Board {
         }
     }
 
+    /**
+     * This method moves the tetromino right by changing its position
+     */
     public void moveTetrominoRight() {
         Position currentPos = currentTetromino.getPosition();
 
@@ -169,6 +242,12 @@ public class Board {
 
     }
 
+    /**
+     * This method rotates the tetromino by changing its shape
+     *
+     * Since every tetromino has its own list of representations, this method changes the shape index
+     * to get the next rotated version
+     */
     public void rotateTetromino() {
         int currentShape = currentTetromino.getShape();
         currentShape = (currentShape + 1) % currentTetromino.getTetrominoRepresentation().size();

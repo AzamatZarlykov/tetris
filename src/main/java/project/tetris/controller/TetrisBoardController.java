@@ -5,8 +5,6 @@ import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -34,60 +32,146 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * This class is responsible for all the events happening on the <code>tetris.fxml</code>
+ *
+ * Besides, to display blocks on the grid, it instantiates grid elements from fxml element, starts the keyframe to
+ * refresh the board
+ */
 public class TetrisBoardController {
-    // store all the tetromino
+    /**
+     * <code>Timeline</code> to set cycles of the game. Used to refresh the tetris board
+     */
     Timeline timeline;
+    /**
+     * representation of the board with rectangles. Contains empty and filled rectangles
+     */
     private Rectangle[][] allTetromino;
+    /**
+     * currently falling tetromino representation
+     */
     private Rectangle[][] fallingTetromino;
+    /**
+     * interface to call certain actions based on keyboard actions
+     */
     private KeyboardEventListener eventListener;
+
+    /**
+     * indicate if game is over
+     */
     private boolean isGameOver;
+
+    /**
+     * binded property to a pause button element
+     */
     private final BooleanProperty paused = new SimpleBooleanProperty();
 
+    /**
+     * panel that represents the game grid
+     */
     @FXML
     private GridPane gameGrid;
+    /**
+     * panel that holds the tetromino shape
+     */
     @FXML
-    public GridPane tetrominoPanel; // panel to display the tetromino shape
+    public GridPane tetrominoPanel;
+    /**
+     * Label that displays the score
+     */
     @FXML
     public Label scoreValue;
+    /**
+     * displays score on top
+     */
     @FXML
     public Group notification;
+    /**
+     * button that toggles from paused/resume
+     */
     @FXML
     private ToggleButton pauseButton;
+    /**
+     * Game over label to display at the end of the game
+     */
     @FXML
     private Label gameOverLabel;
+    /**
+     * Panel that displays the next tetromino
+     */
     @FXML
     private GridPane nextTetromino;
+    /**
+     * Panel that displays the saved tetromino
+     */
     @FXML
     private GridPane savedTetromino;
+    /**
+     * Label that shows the current score of the player
+     */
     @FXML
     private Label scoreDisplay;
+    /**
+     * text filed for a user to input non-empty username
+     */
     @FXML
     private TextField username;
+    /**
+     * Label that displays players score while writing username
+     */
     @FXML
     private Label scoreText;
+    /**
+     * Label for the next tetromino box
+     */
     @FXML
     private Label nextText;
+    /**
+     * Border for the next tetromino to display
+     */
     @FXML
     private BorderPane nextBorder;
+    /**
+     * Label for the saved tetromino box
+     */
     @FXML
     private Label saveText;
+    /**
+     * Border for the saved tetromino to display
+     */
     @FXML
     private BorderPane saveBorder;
+    /**
+     * button to leave the game
+     */
     @FXML
     private Button menuBtn;
+    /**
+     * button that saves the username and score
+     */
     @FXML
     private Button saveBtn;
+    /**
+     * leaves the game without saving username and score
+     */
     @FXML
     private Button leaveBtn;
 
 
+    /**
+     * The call to this function stops the keyframe update and displays the game over label
+     */
     public void displayGameOver() {
         timeline.stop();
         gameOverLabel.setVisible(true);
         isGameOver = true;
     }
 
-    // create the grid on the board
+    /**
+     * This method creates the grid on the board
+     *
+     * @param tetrisBoard representation of the tetris board
+     */
     private void instantiateBoardGrid(int[][] tetrisBoard) {
         for (int row = 0; row < tetrisBoard.length; row++ ){
             for (int col = 0; col < tetrisBoard[row].length; col++) {
@@ -99,7 +183,12 @@ public class TetrisBoardController {
         }
     }
 
-    // returns the color of the tetromino based on the number it has
+    /**
+     * Given the number of the block the function returns its corresponding color
+     *
+     * @param i number the tetromino block is represented with
+     * @return Paint that represents the color of the tetromino block
+     */
     private Paint getColor(int i) {
         return switch(i) {
             case 0 -> Color.TRANSPARENT;
@@ -114,6 +203,10 @@ public class TetrisBoardController {
         };
     }
 
+    /**
+     * Given updated information, this method sets the positions relative to the panel
+     * @param tetrominoInfo current tetromino information
+     */
     private void setTetrominoPositionOnBoard(TetrominoInformation tetrominoInfo) {
         // setting the x position
         tetrominoPanel.setLayoutX(
@@ -129,7 +222,11 @@ public class TetrisBoardController {
         );
     }
 
-    // display the tetromino on the panel given the color
+    /**
+     * Displays the currently falling tetromino on the panel
+     *
+     * @param tetrominoInfo current tetromino information
+     */
     private void displayTetrominoShape(TetrominoInformation tetrominoInfo){
         int[][] tetromino = tetrominoInfo.getTetromino();
         for (int i = 0; i < tetromino.length; i++) {
@@ -144,12 +241,23 @@ public class TetrisBoardController {
         setTetrominoPositionOnBoard(tetrominoInfo);
     }
 
+    /**
+     * Displays the tetromino on the board by coloring its rectangle/block
+     *
+     * @param color color of the tetromino to be passed
+     * @param rect the particular block of the tetromino to be colored
+     */
     private void drawTetromino(int color, Rectangle rect) {
         rect.setFill(getColor(color));
         rect.setArcHeight(9);
         rect.setArcWidth(9);
     }
 
+    /**
+     * This method scans through the board and displays already located and falling tetrominos
+     *
+     * @param board board representation with all its tetrominos
+     */
     public void refreshGameBackground(int[][] board) {
         for (int row = 0; row < board.length; row++) {
             for (int col = 0; col < board[row].length; col++) {
@@ -158,6 +266,12 @@ public class TetrisBoardController {
         }
     }
 
+    /**
+     * This method is called when the game needs to update the current, next and saved tetromino
+     *
+     * It sets current tetromino on the panel and displays it on the board just like next and saved
+     * @param updated Tetromino information with updated data
+     */
     private void refreshTetrominoPosition(TetrominoInformation updated) {
         setTetrominoPositionOnBoard(updated);
 
@@ -168,10 +282,15 @@ public class TetrisBoardController {
             }
         }
 
-        displayNextTetromino(updated);
-        displaySavedTetromino(updated);
+        displayNextTetromino(updated.getNext());
+        displaySavedTetromino(updated.getSaved());
     }
 
+    /**
+     * This method displays extra points that player scored on the board
+     *
+     * @param deletedRowInfo provides information on obtained score and number of lines removed
+     */
     private void displayScoreNotification(DeletedRowInfo deletedRowInfo) {
         if (deletedRowInfo != null && deletedRowInfo.getRowCount() > 0) {
             ScoreUpdateNotification n = new ScoreUpdateNotification(
@@ -183,6 +302,11 @@ public class TetrisBoardController {
 
     }
 
+    /**
+     * This method sets the cycle of the game for every 400 milliseconds
+     *
+     * Every cycle, game updates. It calls set of methods that refresh the game
+     */
     private void setGameLoop() {
         // every 400 millis update the board
         timeline = new Timeline((new KeyFrame(Duration.millis(400),
@@ -198,6 +322,9 @@ public class TetrisBoardController {
         timeline.play();
     }
 
+    /**
+     * This method checks every keyboard press and calls the corresponding functions
+     */
     private void setInputEvents() {
         gameGrid.setOnKeyPressed(event -> {
             if (paused.getValue() == Boolean.FALSE && !isGameOver) {
@@ -231,6 +358,11 @@ public class TetrisBoardController {
         });
     }
 
+    /**
+     * Binds the <code>paused</code> to a toggle button <code>pauseButton</code>.
+     *
+     * Additionally, it changes the message of the text based on the state of the button
+     */
     private void bindPausedButton(){
         pauseButton.selectedProperty().bindBidirectional(paused);
         pauseButton.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
@@ -244,11 +376,15 @@ public class TetrisBoardController {
         });
     }
 
-    private void displayNextTetromino(TetrominoInformation tetrominoInfo) {
+    /**
+     * This method displays the next tetromino on its panel inside the border box
+     *
+     * @param n next tetromino to be passed
+     */
+    private void displayNextTetromino(Tetromino n) {
         int offset = 4;
 
-        Tetromino tetromino = tetrominoInfo.getNext();
-        int[][] next = tetromino.getStructure();
+        int[][] next = n.getStructure();
 
         nextTetromino.getChildren().clear();
 
@@ -267,11 +403,15 @@ public class TetrisBoardController {
         }
     }
 
-    private void displaySavedTetromino(TetrominoInformation tetrominoInfo) {
+    /**
+     * This method displays the saved tetromino on its panel inside the border box
+     *
+     * @param s saved tetromino to be passed
+     */
+    private void displaySavedTetromino(Tetromino s) {
         int offset = 4;
 
-        Tetromino tetromino = tetrominoInfo.getSaved();
-        int[][] saved = tetromino.getStructure();
+        int[][] saved = s.getStructure();
 
         savedTetromino.getChildren().clear();
 
@@ -289,6 +429,14 @@ public class TetrisBoardController {
         }
     }
 
+    /**
+     * This method is responsible for all the part of the game: Setting board, keyboard inputs, displaying, etc.
+     *
+     * It is a main entry since it is called from <code>GameController</code> class to start the game
+     *
+     * @param tetrisBoard tetris board representation of the game
+     * @param tetrominoInfo current tetromino data to be passed
+     */
     // entry
     public void run(int[][] tetrisBoard, TetrominoInformation tetrominoInfo) {
 
@@ -303,21 +451,30 @@ public class TetrisBoardController {
 
         displayTetrominoShape(tetrominoInfo);
 
-        displayNextTetromino(tetrominoInfo);
+        displayNextTetromino(tetrominoInfo.getNext());
 
-        displaySavedTetromino(tetrominoInfo);
+        displaySavedTetromino(tetrominoInfo.getSaved());
 
         setGameLoop();
     }
 
+    /**
+     * @param eventListener keyboard event listener to be passed
+     */
     public void setEventListener(KeyboardEventListener eventListener) {
         this.eventListener = eventListener;
     }
 
+    /**
+     * @param currentScore current score to bind with the label that displays the score
+     */
     public void bindScore(IntegerProperty currentScore) {
         scoreValue.textProperty().bind(currentScore.asString());
     }
 
+    /**
+     * This method removes the fxml elements of the game at the end of the game
+     */
     private void removeGamePlay() {
         if (!isGameOver) {
             displayGameOver();
@@ -337,6 +494,11 @@ public class TetrisBoardController {
         menuBtn.setVisible(false);
     }
 
+    /**
+     * This method sets the limit to a text field for a username input
+     *
+     * @param maxLength max length to set on the text field
+     */
     private void addTextLimiter(int maxLength) {
         username.textProperty().addListener((ov, oldValue, newValue) -> {
             if (username.getText().length() > maxLength) {
@@ -346,7 +508,10 @@ public class TetrisBoardController {
         });
     }
 
-    public void onMenuBtnClick(ActionEvent actionEvent) throws IOException {
+    /**
+     * When menu button is clicked, this method sets the visibility to certain elements
+     */
+    public void onMenuBtnClick() {
         removeGamePlay();
         username.setVisible(true);
 
@@ -360,17 +525,14 @@ public class TetrisBoardController {
         addTextLimiter(15);
     }
 
-    private void moveToMainMenu(ActionEvent event) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("menu.fxml"));
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        Scene scene = new Scene(fxmlLoader.load());
-
-        stage.setScene(scene);
-        stage.show();
-    }
-
-
-
+    /**
+     * This method saves the username and their score to a txt file
+     *
+     * It checks if the username is not empty
+     *
+     * @param actionEvent action event to be passed
+     * @throws IOException If I/O exception occurred
+     */
     public void onSaveBtnClick(ActionEvent actionEvent) throws IOException {
         if (username.getText().trim().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -382,7 +544,7 @@ public class TetrisBoardController {
                     new FileWriter("leaderboard/scores.txt", true)
             );
 
-            String uname = username.getText();
+            String uname = username.getText().trim();
             String score = scoreValue.getText();
 
             bw.write(uname + ": " + score + "\n");
@@ -392,7 +554,28 @@ public class TetrisBoardController {
         }
     }
 
+    /**
+     * If user does not want to save their score, this method is called when leave button is clicked
+     *
+     * @param actionEvent action event to be passed
+     * @throws IOException If I/O exception occurred
+     */
     public void onLeaveBtnClick(ActionEvent actionEvent) throws IOException {
         moveToMainMenu(actionEvent);
+    }
+
+    /**
+     * Changes the scene to a main menu by obtaining its fxml file
+     *
+     * @param event action even that is caused from clicking the button
+     * @throws IOException If I/O exception occurred
+     */
+    private void moveToMainMenu(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("menu.fxml"));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(fxmlLoader.load());
+
+        stage.setScene(scene);
+        stage.show();
     }
 }

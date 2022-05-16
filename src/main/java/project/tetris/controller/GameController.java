@@ -1,3 +1,4 @@
+
 package project.tetris.controller;
 
 import project.tetris.controller.events.KeyboardEventListener;
@@ -8,12 +9,29 @@ import project.tetris.model.tetromino.Tetromino;
 import project.tetris.model.tetromino.TetrominoGenerator;
 import project.tetris.model.tetromino.TetrominoInformation;
 
-// Controller of the game
+/**
+ * This class maintains is a bridge between the tetris game, board and event handlers
+ *
+ * It instantiates the board, defines the event handlers, generates tetrominos and calls certain methods from the
+ * <code>TetrisBoardController</code>
+ */
 public class GameController implements KeyboardEventListener {
+    /**
+     * Board of the game
+     */
     private final Board board;  // board model
+    /**
+     * Generator of tetrominos that is used to whenever next, saved or new tetromino is needed
+     */
     private final TetrominoGenerator generator;
+    /**
+     * Tetris game view controller
+     */
     private final TetrisBoardController view;   // view
 
+    /**
+     * @param view View controller of the game passed from menu controller
+     */
     public GameController(TetrisBoardController view) {
         this.board = new Board();
         this.generator = new TetrominoGenerator();
