@@ -135,7 +135,7 @@ public class MenuController  {
      *
      * @param DIR Directory name
      * @param FILE_NAME File name
-     * @throws IOException
+     * @throws IOException if I/O exception happened
      */
     private void checkLeaderboardExist(String DIR, String FILE_NAME) throws IOException {
         File directory = new File(DIR);

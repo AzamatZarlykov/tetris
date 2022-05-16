@@ -22,6 +22,7 @@ public class Highscore {
 
     /**
      * <code>Highscore</code> constructor that stores the id and the score
+     * @param username username to be passed
      * @param score int score to be passed
      * @param id int id to be passed
      */
