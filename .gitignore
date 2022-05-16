@@ -2,3 +2,4 @@ target/
 leaderboard/
 docs/
 .idea/
+${project.build.directory}/
