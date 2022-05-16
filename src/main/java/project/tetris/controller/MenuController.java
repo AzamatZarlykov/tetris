@@ -20,6 +20,9 @@ import project.tetris.model.menu.InfoType;
 import project.tetris.model.menu.User;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 
@@ -31,7 +34,7 @@ import java.util.*;
  *
  * @author Azamat Zarlykov
  */
-public class MenuController {
+public class MenuController  {
     /**
      * table instance from the fxml
      */
@@ -94,7 +97,6 @@ public class MenuController {
      */
     private final ObservableList<Highscore> data = FXCollections.observableArrayList();
 
-
     /**
      * Current information role on the menu: Leaderboard, Instruction or None
      */
@@ -128,6 +130,24 @@ public class MenuController {
         instantiateGameController(fxmlLoader);
     }
 
+    /**
+     * Checks if the directory for score exists. If not it creates in the root directory
+     *
+     * @param DIR Directory name
+     * @param FILE_NAME File name
+     * @throws IOException
+     */
+    private void checkLeaderboardExist(String DIR, String FILE_NAME) throws IOException {
+        File directory = new File(DIR);
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+
+        if (!new File(DIR + FILE_NAME).exists()) {
+            Path newFilePath = Paths.get(DIR + FILE_NAME);
+            Files.createFile(newFilePath);
+        }
+    }
 
     /**
      * Loads the score data, to display in the leaderboard section
@@ -137,13 +157,17 @@ public class MenuController {
      * @throws IOException If I/O exception occurred
      */
     private void loadData() throws IOException {
+        String DIR = "leaderboard/";
+        String FILE_NAME = "scores.txt";
+
+        checkLeaderboardExist(DIR, FILE_NAME);
+
         int limit = 10;
-        String leaderboardTxt = "leaderboard/scores.txt";
 
         String line;
 
         List<User> users = new ArrayList<>();
-        BufferedReader br = new BufferedReader(new FileReader(leaderboardTxt));
+        BufferedReader br = new BufferedReader(new FileReader(DIR + FILE_NAME));
 
         while ((line = br.readLine()) != null) {
             if (line.length() == 0) {
