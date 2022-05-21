@@ -12,7 +12,7 @@ ask the controller.
 
 ## Running the program
 To build and run the project write in the terminal or IDE:
-```mvn exec:java```
+```mvn compile exec:java```
 
 ## Getting JavaDoc
 To generate JavaDoc for the project, write in the terminal or IDE:
