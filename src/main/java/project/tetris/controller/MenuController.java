@@ -92,6 +92,16 @@ public class MenuController  {
     private Button menu;
 
     /**
+     * Directory name to store sore
+     */
+    private final String DIR = "leaderboard/";
+
+    /**
+     * File name to store score
+     */
+    private final String FILE_NAME = "scores.txt";
+
+    /**
      * container that stores the every <code>HighScore</code> instance to the list to display
      * on the  table
      */
@@ -101,6 +111,14 @@ public class MenuController  {
      * Current information role on the menu: Leaderboard, Instruction or None
      */
     private InfoType infoType;
+
+    /**
+     * Constructor that generates necessary items for the game like leaderboard score
+     * @throws IOException IO exceptions
+     */
+    public MenuController() throws IOException {
+        checkLeaderboardExist();
+    }
 
     /**
      * Method instantiates the <code>GameController</code> that maintains the game
@@ -133,11 +151,9 @@ public class MenuController  {
     /**
      * Checks if the directory for score exists. If not it creates in the root directory
      *
-     * @param DIR Directory name
-     * @param FILE_NAME File name
      * @throws IOException if I/O exception happened
      */
-    private void checkLeaderboardExist(String DIR, String FILE_NAME) throws IOException {
+    private void checkLeaderboardExist() throws IOException {
         File directory = new File(DIR);
         if (!directory.exists()) {
             directory.mkdir();
@@ -157,11 +173,6 @@ public class MenuController  {
      * @throws IOException If I/O exception occurred
      */
     private void loadData() throws IOException {
-        String DIR = "leaderboard/";
-        String FILE_NAME = "scores.txt";
-
-        checkLeaderboardExist(DIR, FILE_NAME);
-
         int limit = 10;
 
         String line;
